@@ -1,0 +1,67 @@
+service: softtekChallengue
+useDotenv: true
+
+resources:
+  Resources:
+    TaskTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: tb_tasks
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
+functions:
+  getTasks:
+    handler: src/model_x/getTasks.handler
+    events:
+      - httpApi: GET /api/v1/tasks
+  getTask:
+    handler: src/model_x/getTask.handler
+    events:
+      - httpApi: GET /api/v1/tasks/{id_task}
+  createTask:
+    handler: src/model_x/createTask.handler
+    events:
+      - httpApi: POST /api/v1/tasks
+  updateTask:
+    handler: src/model_x/updateTask.handler
+    events:
+      - httpApi: PUT /api/v1/tasks/{id_task}
+  deleteTask:
+    handler: src/model_x/deleteTask.handler
+    events:
+      - httpApi: DELETE /api/v1/tasks/{id_task}
+  getFilmSwapi:
+    handler: src/swapi/getFilmHandler.handler
+    events:
+      - httpApi: GET /api/v1/swapi/films/{id_film}
+  getFilmsSwapi:
+    handler: src/swapi/getFilmsHandler.handler
+    events:
+      - httpApi: GET /api/v1/swapi/films
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: 'us-east-2'
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource:
+        - Fn::GetAtt:
+            - TaskTable
+            - Arn
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
