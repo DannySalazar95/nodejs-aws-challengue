@@ -1,4 +1,4 @@
-# SOFTTEK CHALLENGUE
+# CHALLENGUE
 
 Desarrollado por Danny Salazar
 
